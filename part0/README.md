@@ -1,0 +1,1 @@
+In part 0 I intend to understand how HTTP request works. To do so I use UML (Unified Modeling Language) to visualize how request works -  in the first case (when the application makes a classic server request) it leads to a full reload of the page at each request - in the second case when we only up date the user interface whitout realoading the whole page.
