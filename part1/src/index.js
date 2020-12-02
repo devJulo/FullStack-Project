@@ -14,8 +14,8 @@ const App = () => {
 
   return (
     <>
-      <Header course = 
-        {course}
+      <Header
+        course = {course}
       />
       <Content 
         exercises1 = {exercises1}
@@ -34,12 +34,10 @@ const App = () => {
   )
 }
 
-const Header = () => {
-  const course = 'Half Stack application development'
-
+const Header = (props) => {
   return (
     <div>
-      <h1>{course}</h1>
+      <h1>{props.course}</h1>
     </div>
   )
 }
