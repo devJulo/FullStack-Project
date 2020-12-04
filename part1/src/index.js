@@ -1,58 +1,32 @@
-import React from 'react'
+import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
 
+const Button = ({handleClick, text}) => <button onClick={handleClick}>{text}</button>
+
 const App = () => {
-  const course = {
-    name: 'Half Stack application development',
-    parts: [
-      {
-        name: 'Fundamentals of React',
-        exercises: 10
-      },
-      {
-        name: 'Using props to pass data',
-        exercises: 7
-      },
-      {
-        name: 'State of a component',
-        exercises: 14
-      }
-    ]
-  }
-  
-  return (
-    <>
-      <Header course = {course.name} />
-      <Content parts={course.parts} />
-      <Total parts={course.parts} />
-    </>
-  )
-}
+  const [good, setGood] = useState(0)
+  const [neutral, setNeutral] = useState(0)
+  const [bad, setBad] = useState(0)
 
-const Header = (props) => {
   return (
     <div>
-      <h1>{props.course}</h1>
+      <h3>Feel free to give your feed back about this app</h3>
+      <div>
+        <Button handleClick={() => setGood(good + 1)} text="good" />
+        <Button handleClick={() => setNeutral(neutral + 1)} text="neutral" />
+        <Button handleClick={() => setBad(bad + 1)} text="bad" />
+      </div>
+      <h3>statiscs</h3>
+      <p>good {good}</p> 
+      <p>neutral {neutral}</p>
+      <p>bad {bad}</p>
     </div>
   )
 }
 
-const Content = (props) => {
-  return (
-    <div>
-      <p>{props.parts[0].name} {props.parts[0].exercises}</p>
-      <p>{props.parts[1].name} {props.parts[1].exercises}</p>
-      <p>{props.parts[2].name} {props.parts[2].exercises}</p>
-    </div>
-  )
-}
+ReactDOM.render(<App />, 
+  document.getElementById('root')
+)
 
-const Total = (props) => {
-  return (
-    <div>
-      <p>Number of exercises {props.parts[0].exercises + props.parts[1].exercises + props.parts[2].exercises}</p>
-    </div>
-  )
-}
 
-ReactDOM.render(<App />, document.getElementById('root'));
+
