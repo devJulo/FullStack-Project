@@ -15,7 +15,7 @@ const Search = (props) => {
             props.persons.map(person => {
                 const regex = new RegExp(`${value}`)
                 let name = person.name.toLowerCase()
-                if (!name.search(regex.source)){
+                if (regex.test(name)){
                     return toRender.push(person)
                 }
                 else {
