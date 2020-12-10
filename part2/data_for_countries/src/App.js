@@ -7,30 +7,35 @@ const Country = (props) => {
       <h1>{props.country.name}</h1>
         <p>capital {props.country.capital}</p>
         <p>population {props.country.population}</p>
-      <h2>languages</h2>
+      <h2>Spoken languages</h2>
         <ul>
           {props.country.languages.map(language => <li key={language.name}>{language.name}</li>)}
         </ul>
-        <img alt="country flag" src={props.country.flag}></img>
+        <img className="flag" alt="country flag" src={props.country.flag}></img>
+      <h2>Weather in {props.country.capital}</h2>
+          <p>temperature: {props.weather.current.temperature} °C</p>
+          <img className="weather"alt={props.weather.current.weather_descriptions[0]} src={props.weather.current.weather_icons[0]}></img>
+          <p>wind: {props.weather.current.wind_speed} km/h direction {props.weather.current.wind_dir}</p>
     </div>
   )
 }
 
 
 
-const Display = ({ newInput, dataToDisplay, setDataToDisplay }) => {
+const Display = ({ newInput, dataToDisplay, setDataToDisplay, weather }) => {
 
   const handleClick = (object) => {
       const toDisplay = []
       const buttonName = object.target.id
       toDisplay.push({Country: dataToDisplay.find(element => element.Country.name === buttonName).Country })
       setDataToDisplay(toDisplay)
+
   }
 
   if (dataToDisplay.length === 1 && newInput !== '') {
     const country = dataToDisplay[0].Country
     return (
-      <Country country={country} />
+      <Country country={country} weather={weather}/>
     )
   }
   else if (dataToDisplay.length === 0 || newInput === ''){
@@ -44,7 +49,6 @@ const Display = ({ newInput, dataToDisplay, setDataToDisplay }) => {
       <div>
         {dataToDisplay.map(data => {
           const button = <button id={data.Country.name} onClick={handleClick}>show</button>
-
           return (
             <p key={data.Country.name}>
               {data.Country.name} {button}
@@ -61,9 +65,54 @@ const Display = ({ newInput, dataToDisplay, setDataToDisplay }) => {
 const App = () => {
   const [newInput, setNewInput] = useState('')
   const [rawDatas, setRawDatas] = useState()
-  const [dataToDisplay, setDataToDisplay] = useState([{Country: ''}])
+  const [weather, setWeather] = useState(
+    {
+      "request": {
+          "type": "",
+          "query": "",
+          "language": "",
+          "unit": ""
+      },
+      "location": {
+          "name": "",
+          "country": "",
+          "region": "",
+          "lat": "",
+          "lon": "",
+          "timezone_id": "",
+          "localtime": "",
+          "localtime_epoch": "",
+          "utc_offset": ""
+      },
+      "current": {
+          "observation_time": "",
+          "temperature": "",
+          "weather_code": "",
+          "weather_icons": [
+              ""
+          ],
+          "weather_descriptions": [
+              ""
+          ],
+          "wind_speed": "",
+          "wind_degree": "",
+          "wind_dir": "",
+          "pressure": "",
+          "precip": "",
+          "humidity": "",
+          "cloudcover": "",
+          "feelslike": "",
+          "uv_index": "",
+          "visibility": "",
+          "is_day": ""
+      }
+  
+  })
 
-  const hook = () => {
+  const [dataToDisplay, setDataToDisplay] = useState([{Country: {name: ''}}])
+  
+
+  const hook_countries = () => {
     axios
       .get('https://restcountries.eu/rest/v2/all')
       .then(response => {
@@ -71,7 +120,39 @@ const App = () => {
       })
       
   } 
-  useEffect(hook, [])
+  useEffect(hook_countries, [])
+
+  const hook_weather = () => {
+    const api_key = process.env.REACT_APP_API_KEY
+    function RemoveAccents(strAccents) {
+      var strAccents = strAccents.split('');
+      var strAccentsOut = new Array();
+      var strAccentsLen = strAccents.length;
+      var accents = 'ÀÁÂÃÄÅàáâãäåÒÓÔÕÕÖØòóôõöøÈÉÊËèéêëðÇçÐÌÍÎÏìíîïÙÚÛÜùúûüÑñŠšŸÿýŽž';
+      var accentsOut = "AAAAAAaaaaaaOOOOOOOooooooEEEEeeeeeCcDIIIIiiiiUUUUuuuuNnSsYyyZz";
+      for (var y = 0; y < strAccentsLen; y++) {
+        if (accents.indexOf(strAccents[y]) != -1) {
+          strAccentsOut[y] = accentsOut.substr(accents.indexOf(strAccents[y]), 1);
+        } else
+          strAccentsOut[y] = strAccents[y];
+      }
+      strAccentsOut = strAccentsOut.join('');
+      return strAccentsOut;
+    }
+
+    if (dataToDisplay.length === 1 && dataToDisplay[0].Country.name !== '') {
+      console.log(RemoveAccents(dataToDisplay[0].Country.capital))
+      axios.get(`https://api.weatherstack.com/current?access_key=${api_key}&query=${RemoveAccents(dataToDisplay[0].Country.capital)}`)
+        .then(response => {
+          setWeather(response.data)
+        })
+    }
+
+  }
+  useEffect(hook_weather, [dataToDisplay])
+ 
+  
+
 
   const handleOnChange = (event) => {
     const countryToRender = []
@@ -101,9 +182,8 @@ const App = () => {
         <p>find countries :</p>
         <input value={newInput} onChange={handleOnChange}/>
       </div>
-      <>
-        <Display newInput={newInput} dataToDisplay={dataToDisplay} setDataToDisplay={setDataToDisplay}/>
-      </>
+      <Display newInput={newInput} dataToDisplay={dataToDisplay} setDataToDisplay={setDataToDisplay} weather={weather}/>
+      
     </>
   )
 }

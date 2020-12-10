@@ -12,8 +12,10 @@ code {
     monospace;
 }
 
-img{
+.flag{
   width: 200px;
   height: auto;
   border: solid 1px
 }
+
+
