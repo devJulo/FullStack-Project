@@ -62,52 +62,10 @@ const Display = ({ newInput, dataToDisplay, setDataToDisplay, weather }) => {
   }
 }
 
-const App = () => {
+const App = ({ template }) => {
   const [newInput, setNewInput] = useState('')
   const [rawDatas, setRawDatas] = useState()
-  const [weather, setWeather] = useState(
-    {
-      "request": {
-          "type": "",
-          "query": "",
-          "language": "",
-          "unit": ""
-      },
-      "location": {
-          "name": "",
-          "country": "",
-          "region": "",
-          "lat": "",
-          "lon": "",
-          "timezone_id": "",
-          "localtime": "",
-          "localtime_epoch": "",
-          "utc_offset": ""
-      },
-      "current": {
-          "observation_time": "",
-          "temperature": "",
-          "weather_code": "",
-          "weather_icons": [
-              ""
-          ],
-          "weather_descriptions": [
-              ""
-          ],
-          "wind_speed": "",
-          "wind_degree": "",
-          "wind_dir": "",
-          "pressure": "",
-          "precip": "",
-          "humidity": "",
-          "cloudcover": "",
-          "feelslike": "",
-          "uv_index": "",
-          "visibility": "",
-          "is_day": ""
-      }
-  
-  })
+  const [weather, setWeather] = useState(template)
 
   const [dataToDisplay, setDataToDisplay] = useState([{Country: {name: ''}}])
   
@@ -126,12 +84,12 @@ const App = () => {
     const api_key = process.env.REACT_APP_API_KEY
     function RemoveAccents(strAccents) {
       var strAccents = strAccents.split('');
-      var strAccentsOut = new Array();
+      var strAccentsOut = [];
       var strAccentsLen = strAccents.length;
       var accents = 'ÀÁÂÃÄÅàáâãäåÒÓÔÕÕÖØòóôõöøÈÉÊËèéêëðÇçÐÌÍÎÏìíîïÙÚÛÜùúûüÑñŠšŸÿýŽž';
       var accentsOut = "AAAAAAaaaaaaOOOOOOOooooooEEEEeeeeeCcDIIIIiiiiUUUUuuuuNnSsYyyZz";
       for (var y = 0; y < strAccentsLen; y++) {
-        if (accents.indexOf(strAccents[y]) != -1) {
+        if (accents.indexOf(strAccents[y]) !== -1) {
           strAccentsOut[y] = accentsOut.substr(accents.indexOf(strAccents[y]), 1);
         } else
           strAccentsOut[y] = strAccents[y];
@@ -141,10 +99,17 @@ const App = () => {
     }
 
     if (dataToDisplay.length === 1 && dataToDisplay[0].Country.name !== '') {
-      console.log(RemoveAccents(dataToDisplay[0].Country.capital))
       axios.get(`https://api.weatherstack.com/current?access_key=${api_key}&query=${RemoveAccents(dataToDisplay[0].Country.capital)}`)
         .then(response => {
-          setWeather(response.data)
+          if (!response.data.error) {
+            const apiResponse = response.data;
+            setWeather(apiResponse)
+          } else {
+              console.log(`Response error: code: ${response.data.error.code}, info: ${response.data.error.info}`)
+              setWeather(template)
+          }
+        }).catch(error => {
+            console.error("An error occurred: ", error);
         })
     }
 
