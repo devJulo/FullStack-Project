@@ -1,5 +1,14 @@
 import React from 'react'
 
-const Contact = ({ person }) => <p>{person.name} {person.number}</p>
+const Contact = ({ person, handleDelete }) => {
+    return (
+        <>
+            <p>
+                {person.name} {person.number} 
+                <button onClick={handleDelete}>delete</button>
+            </p>
+        </>
+    )
+}
 
 export default Contact
