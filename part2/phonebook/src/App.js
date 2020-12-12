@@ -3,6 +3,9 @@ import Search from './components/Search'
 import Submit from './components/Submit'
 import Person from './components/Person'
 import personService from './services/persons'
+import Notification from './components/Notification'
+import Error from './components/Error'
+
 
 
 
@@ -13,6 +16,8 @@ const App = () => {
     const [newNumber, setNewNumber] = useState('')
     const [newSearch, setNewSearch] = useState('')
     const [personsToRender, setPersonsToRender] = useState(persons)
+    const [updateMessage, setUpdateMessage] = useState(null)
+    const [errorMessage, setErrorMessage] = useState(null)
 
     useEffect(() => {
         personService
@@ -26,6 +31,8 @@ const App = () => {
     return (
         <>
             <h2>Phonebook</h2>
+            <Error message={errorMessage}/>
+            <Notification message={updateMessage}/>
             <Search 
                 newSearch={newSearch} 
                 setNewSearch={setNewSearch} 
@@ -47,6 +54,8 @@ const App = () => {
                 setNewNumber={setNewNumber} 
                 personsToRender={personsToRender} 
                 setPersonsToRender={setPersonsToRender}
+                setUpdateMessage={setUpdateMessage}
+                setErrorMessage={setErrorMessage}
             />
             <h2>Numbers</h2>
             <Person 
@@ -55,6 +64,7 @@ const App = () => {
                 setPersonsToRender={setPersonsToRender}
                 setPersons={setPersons}
                 setNewSearch={setNewSearch}
+                setErrorMessage={setErrorMessage}
             />
         </>
     )

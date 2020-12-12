@@ -3,6 +3,7 @@ import Input from './Input'
 import Button from './Button'
 import personService from '../services/persons'
 
+
 const Submit = (props) => {
 
     const addPerson = () => {      
@@ -19,6 +20,22 @@ const Submit = (props) => {
                 props.setNewName('')
                 props.setNewNumber('')
             })
+            .then(() => {
+                props.setUpdateMessage(
+                    `${personObject.name}'s number created`
+                    )
+                    setTimeout(() => {          
+                        props.setUpdateMessage(null)        
+                    }, 3000)
+            })
+            .catch(error => {
+                props.setErrorMessage(
+                    `Information of ${personObject.name} has already been removed from server`
+                )
+                setTimeout(() => {          
+                    props.setErrorMessage(null)        
+                }, 5000)
+            })
     }
 
     const updatePerson = id => {
@@ -30,9 +47,25 @@ const Submit = (props) => {
             .then(returnedPerson => {
                 props.setPersons(props.persons.map(person => person.id !== id ? person : returnedPerson))
                 props.setPersonsToRender(props.personsToRender.map(person => person.id !== id ? person : returnedPerson))
+                props.setNewName('')
+                props.setNewNumber('')
             })
-
-
+            .then(() => {
+                props.setUpdateMessage(
+                    `${person.name}'s number updated`
+                    )
+                    setTimeout(() => {          
+                        props.setUpdateMessage(null)        
+                    }, 3000)
+            })
+            .catch(error => {
+                props.setErrorMessage(
+                    `Information of ${person.name} has already been removed from server`
+                )
+                setTimeout(() => {          
+                    props.setErrorMessage(null)        
+                }, 5000)
+            })
     }
     
     const handleNameChange = (event) => {

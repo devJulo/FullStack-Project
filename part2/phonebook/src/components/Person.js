@@ -14,6 +14,16 @@ const Person = (props) => {
                 props.setPersons(personsReturned)
                 props.setNewSearch('')
             })
+            .catch(error => {
+                props.setErrorMessage(
+                    `Information of ${person.name} has already been removed from server`
+                )
+                setTimeout(() => {          
+                    props.setErrorMessage(null)        
+                }, 5000)
+                props.setPersons(props.persons.filter(p => p.id !== id))
+                props.setPersonsToRender(props.personsToRender.filter(p => p.id !== id))
+            })
         }
 
     }
